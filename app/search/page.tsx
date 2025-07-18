@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense} from "react"
 import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -14,7 +14,7 @@ function fuzzyMatch(str: string, query: string) {
   return str.toLowerCase().includes(query.toLowerCase())
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get("q") || ""
   const [products, setProducts] = useState<Product[]>([])
@@ -136,5 +136,13 @@ export default function SearchPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="container py-12 text-center">Loading search...</div>}>
+      <SearchPageContent />
+    </Suspense>
   )
 } 
