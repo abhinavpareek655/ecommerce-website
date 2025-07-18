@@ -1,16 +1,21 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart, Heart, ArrowRight } from "lucide-react"
+import Autoplay from "embla-carousel-autoplay"
+import { useRef } from "react"
+import MobileSlideshow from "@/components/ui/MobileSlideshow"
 
 export default function HomePage() {
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-background">
-        <div className="container py-24 lg:py-32">
+      <section className="relative bg-gradient-to-r from-primary/10 via-primary/5 to-background p-8">
+        <div className="container">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
@@ -36,13 +41,15 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <Image
-                src="/placeholder.svg?height=600&width=600"
-                alt="Hero Product"
-                width={600}
-                height={600}
-                className="rounded-2xl shadow-2xl"
-                priority
+              <MobileSlideshow
+                slides={[
+                  { image: "https://mir-s3-cdn-cf.behance.net/project_modules/hd/84589835172167.56ec20e07a472.png", alt: "Hero Slide 1" },
+                  { image: "https://media.licdn.com/dms/image/v2/D4E12AQGCmU6lCJwRtg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1737891571244?e=2147483647&v=beta&t=xCz3GruyQoy4bvHpdi0XSOqorwWGq5_ouIgOTzqsXqQ", alt: "Hero Slide 2" },
+                  { image: "https://i.ytimg.com/vi/GDlkCkcIqTs/maxresdefault.jpg", alt: "Hero Slide 3" },
+                  { image: "https://image-us.samsung.com/us/smartphones/galaxy-z-flip7/images/Gallery/SCOMB7Q7-282-B7_Static_KV_PC_800x600.jpg?$product-details-jpg$", alt: "Hero Slide 4" },
+                  { image: "https://newspaperads.ads2publish.com/wp-content/uploads/2017/10/sony-the-next-big-thing-is-small-the-sony-6000-mirroriess-camera-so-compact-it-can-take-you-anywhere-ad-deccan-chronicle-hyderabad-06-10-2017.png", alt: "Hero Slide 5" },
+                ]}
+                autoPlayInterval={3000}
               />
             </div>
           </div>
@@ -50,7 +57,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Categories */}
-      <section className="container">
+      <section className="container px-8">
         <div className="space-y-8">
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-bold">Shop by Category</h2>
@@ -60,15 +67,15 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {[
-              { name: "Electronics", image: "/placeholder.svg?height=200&width=200", href: "/categories/electronics" },
-              { name: "Clothing", image: "/placeholder.svg?height=200&width=200", href: "/categories/clothing" },
+              { name: "Electronics", image: "https://www.shutterstock.com/image-illustration/collection-consumer-electronics-flying-air-600nw-738107467.jpg", href: "/categories/electronics" },
+              { name: "Clothing", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8c_q2rwvnVYE2x4ZjkiWnb_7iWoSoQsouFQ&s", href: "/categories/clothing" },
               {
                 name: "Home & Garden",
-                image: "/placeholder.svg?height=200&width=200",
+                image: "https://www.ugaoo.com/cdn/shop/articles/garden_tools.jpg?v=1689148680",
                 href: "/categories/home-garden",
               },
-              { name: "Sports", image: "/placeholder.svg?height=200&width=200", href: "/categories/sports-outdoors" },
-              { name: "Books", image: "/placeholder.svg?height=200&width=200", href: "/categories/books" },
+              { name: "Sports", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHSQ96Vzp-kbBc1sjUHVMLp27BPXlkbdyAyw&s", href: "/categories/sports-outdoors" },
+              { name: "Books", image: "https://images.theconversation.com/files/45159/original/rptgtpxd-1396254731.jpg?ixlib=rb-4.1.0&q=45&auto=format&w=754&fit=clip", href: "/categories/books" },
             ].map((category) => (
               <Link key={category.name} href={category.href}>
                 <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer">
@@ -92,7 +99,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Products */}
-      <section className="container">
+      <section className="container px-8">
         <div className="space-y-8">
           <div className="flex justify-between items-center">
             <div className="space-y-2">
@@ -107,10 +114,10 @@ export default function HomePage() {
             {[
               {
                 id: "1",
-                name: "Wireless Bluetooth Headphones",
-                price: 199.99,
-                comparePrice: 249.99,
-                image: "/placeholder.svg?height=300&width=300",
+                name: "Sony WH-CH520, Wireless On-Ear Bluetooth Headphones with Mic",
+                price: "3,989",
+                comparePrice: "4,999",
+                image: "https://m.media-amazon.com/images/I/41lArSiD5hL.jpg",
                 rating: 4.5,
                 reviews: 128,
                 badge: "Best Seller",
@@ -118,9 +125,9 @@ export default function HomePage() {
               {
                 id: "2",
                 name: "Organic Cotton T-Shirt",
-                price: 29.99,
-                comparePrice: 39.99,
-                image: "/placeholder.svg?height=300&width=300",
+                price: 300,
+                comparePrice: 999,
+                image: "https://brownliving.in/cdn/shop/products/organic-cotton-naturally-dyed-slate-grey-menst-shirt-sustainable-products-on-brown-living-214627.jpg?v=1749561815&width=900",
                 rating: 4.3,
                 reviews: 89,
                 badge: "Eco-Friendly",
@@ -128,9 +135,9 @@ export default function HomePage() {
               {
                 id: "3",
                 name: "Smart Home Security Camera",
-                price: 89.99,
-                comparePrice: 119.99,
-                image: "/placeholder.svg?height=300&width=300",
+                price: "4,999",
+                comparePrice: "6,499",
+                image: "https://i.ytimg.com/vi/9hXZ7oPpOuk/maxresdefault.jpg",
                 rating: 4.7,
                 reviews: 156,
                 badge: "New",
@@ -138,9 +145,9 @@ export default function HomePage() {
               {
                 id: "4",
                 name: "Modern Table Lamp",
-                price: 79.99,
-                comparePrice: 99.99,
-                image: "/placeholder.svg?height=300&width=300",
+                price: "299",
+                comparePrice: "1,499",
+                image: "https://m.media-amazon.com/images/I/813hoLKyUOL.jpg",
                 rating: 4.4,
                 reviews: 73,
                 badge: "Sale",
@@ -184,9 +191,9 @@ export default function HomePage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="space-x-2">
-                        <span className="font-bold text-lg">${product.price}</span>
+                        <span className="font-bold text-lg">₹{product.price}</span>
                         {product.comparePrice && (
-                          <span className="text-sm text-muted-foreground line-through">${product.comparePrice}</span>
+                          <span className="text-sm text-muted-foreground line-through">₹{product.comparePrice}</span>
                         )}
                       </div>
                       <Button size="sm">
@@ -203,7 +210,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="bg-muted/50">
+      <section className="bg-muted/50 px-8">
         <div className="container py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center space-y-4">
