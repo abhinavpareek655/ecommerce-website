@@ -3,7 +3,7 @@
 import type React from "react"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, ShoppingCart, Heart, User, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -18,10 +18,14 @@ import {
 import { useAuth } from "@/hooks/use-auth"
 import { useCart } from "@/hooks/use-cart"
 import { useRouter } from "next/navigation"
+import { supabase, type Product } from "@/lib/supabase"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [suggestions, setSuggestions] = useState<Product[]>([])
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
   const { user, profile, signOut } = useAuth()
   const { totalItems } = useCart()
   const router = useRouter()
@@ -32,6 +36,37 @@ export function Header() {
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
       setSearchQuery("")
     }
+  }
+
+  useEffect(() => {
+    // Fetch all product names for suggestions
+    const fetchProducts = async () => {
+      const { data } = await supabase.from("products").select("id, name, slug, status")
+      setAllProducts(data || [])
+    }
+    fetchProducts()
+  }, [])
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase()
+      const matches = allProducts
+        .filter(
+          (p) => p.status === "active" && p.name.toLowerCase().includes(q)
+        )
+        .slice(0, 8)
+      setSuggestions(matches)
+      setShowSuggestions(true)
+    } else {
+      setSuggestions([])
+      setShowSuggestions(false)
+    }
+  }, [searchQuery, allProducts])
+
+  const handleSuggestionClick = (name: string) => {
+    setSearchQuery(name)
+    setShowSuggestions(false)
+    router.push(`/search?q=${encodeURIComponent(name)}`)
   }
 
   const handleSignOut = async () => {
@@ -72,8 +107,25 @@ export function Header() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setShowSuggestions(!!searchQuery)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
               className="pl-10"
+              autoComplete="off"
             />
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-50 max-h-64 overflow-auto">
+                {suggestions.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    className="w-full text-left px-4 py-2 hover:bg-muted focus:bg-muted text-sm"
+                    onMouseDown={() => handleSuggestionClick(s.name)}
+                  >
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </form>
 
@@ -152,8 +204,25 @@ export function Header() {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setShowSuggestions(!!searchQuery)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                   className="pl-10"
+                  autoComplete="off"
                 />
+                {showSuggestions && suggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 mt-1 bg-white border rounded shadow-lg z-50 max-h-64 overflow-auto">
+                    {suggestions.map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        className="w-full text-left px-4 py-2 hover:bg-muted focus:bg-muted text-sm"
+                        onMouseDown={() => handleSuggestionClick(s.name)}
+                      >
+                        {s.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </form>
 

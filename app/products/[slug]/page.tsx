@@ -18,6 +18,7 @@ import { supabase, type Product, type ProductVariant, type Review } from "@/lib/
 import { useCart } from "@/hooks/use-cart"
 import { useAuth } from "@/hooks/use-auth"
 import { toast } from "@/hooks/use-toast"
+import MobileSlideshow from "@/components/ui/MobileSlideshow"
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -145,7 +146,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="container py-8">
+      <div className="container p-8">
         <div className="grid lg:grid-cols-2 gap-8">
           <div className="space-y-4">
             <div className="bg-muted h-96 rounded-lg animate-pulse" />
@@ -168,7 +169,7 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="container py-8">
+      <div className="container p-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Product not found</h1>
           <p className="text-muted-foreground mt-2">The product you're looking for doesn't exist.</p>
@@ -183,48 +184,18 @@ export default function ProductDetailPage() {
   const inventoryQuantity = getInventoryQuantity()
 
   return (
-    <div className="container py-8">
+    <div className="container p-8">
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Product Images */}
         <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-lg bg-muted">
-            <Image
-              src={product.images[selectedImage] || "/placeholder.svg?height=600&width=600"}
-              alt={product.name}
-              width={600}
-              height={600}
-              className="w-full h-96 object-cover"
-            />
-            {product.featured && <Badge className="absolute top-4 left-4">Featured</Badge>}
-            {comparePrice && comparePrice > currentPrice && (
-              <Badge variant="destructive" className="absolute top-4 right-4">
-                Sale
-              </Badge>
-            )}
-          </div>
-
-          {/* Thumbnail Images */}
-          {product.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-2">
-              {product.images.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`relative overflow-hidden rounded border-2 transition-colors ${
-                    selectedImage === index ? "border-primary" : "border-muted"
-                  }`}
-                >
-                  <Image
-                    src={image || "/placeholder.svg"}
-                    alt={`${product.name} ${index + 1}`}
-                    width={150}
-                    height={150}
-                    className="w-full h-20 object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
+          <MobileSlideshow
+            slides={product.images.map((img, idx) => ({
+              image: img || "/placeholder.svg",
+              alt: `${product.name} ${idx + 1}`
+            }))}
+            autoPlayInterval={4000}
+            imageClassName="object-contain bg-white"
+          />
         </div>
 
         {/* Product Details */}

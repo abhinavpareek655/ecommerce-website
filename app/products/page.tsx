@@ -164,10 +164,17 @@ export default function ProductsPage() {
       <div className="space-y-3">
         <h3 className="font-semibold">Price Range</h3>
         <div className="space-y-4">
-          <Slider value={priceRange} onValueChange={setPriceRange} max={1000} step={10} className="w-full" />
+          <Slider
+            value={priceRange}
+            onValueChange={setPriceRange}
+            min={0}
+            max={1000}
+            step={10}
+            className="w-full"
+          />
           <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
+            <span>₹{priceRange[0]}</span>
+            <span>₹{priceRange[1]}</span>
           </div>
         </div>
       </div>
@@ -175,7 +182,7 @@ export default function ProductsPage() {
   )
 
   return (
-    <div className="container py-8">
+    <div className="container p-6">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -187,7 +194,7 @@ export default function ProductsPage() {
             {/* Search */}
             <Input
               placeholder="Search products..."
-              value={searchQuery}
+              value={searchQuery} 
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full md:w-64"
             />

@@ -12,9 +12,10 @@ interface Slide {
 interface MobileSlideshowProps {
   slides: Slide[]
   autoPlayInterval?: number
+  imageClassName?: string
 }
 
-export default function MobileSlideshow({ slides, autoPlayInterval = 3000 }: MobileSlideshowProps) {
+export default function MobileSlideshow({ slides, autoPlayInterval = 3000, imageClassName }: MobileSlideshowProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const slideRef = useRef<HTMLDivElement>(null)
@@ -76,7 +77,7 @@ export default function MobileSlideshow({ slides, autoPlayInterval = 3000 }: Mob
             src={slides[currentSlide].image || "/placeholder.svg"}
             alt={slides[currentSlide].alt}
             fill
-            className="object-cover transition-all duration-700 ease-in-out"
+            className={imageClassName ? `${imageClassName} transition-all duration-700 ease-in-out` : "object-cover transition-all duration-700 ease-in-out"}
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />

@@ -12,7 +12,7 @@ import { Footer } from "@/components/layout/footer"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "EcomStore - Modern E-commerce Platform",
+  title: "Shoply - Modern E-commerce Platform",
   description: "A modern e-commerce platform built with Next.js and Supabase",
     generator: 'v0.dev'
 }
