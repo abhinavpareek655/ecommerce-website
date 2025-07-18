@@ -7,10 +7,34 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart, Heart, ArrowRight } from "lucide-react"
 import Autoplay from "embla-carousel-autoplay"
-import { useRef } from "react"
+import { useEffect, useState } from "react";
+import { supabase, type Product } from "@/lib/supabase";
 import MobileSlideshow from "@/components/ui/MobileSlideshow"
 
 export default function HomePage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("status", "active")
+        .limit(4); // or however many you want to show
+
+      if (error) {
+        console.error("Error fetching products:", error);
+      } else {
+        setProducts(data || []);
+      }
+      setLoading(false);
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <div className="space-y-16">
       {/* Hero Section */}
@@ -111,100 +135,66 @@ export default function HomePage() {
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                id: "1",
-                name: "Sony WH-CH520, Wireless On-Ear Bluetooth Headphones with Mic",
-                price: "3,989",
-                comparePrice: "4,999",
-                image: "https://m.media-amazon.com/images/I/41lArSiD5hL.jpg",
-                rating: 4.5,
-                reviews: 128,
-                badge: "Best Seller",
-              },
-              {
-                id: "2",
-                name: "Organic Cotton T-Shirt",
-                price: 300,
-                comparePrice: 999,
-                image: "https://brownliving.in/cdn/shop/products/organic-cotton-naturally-dyed-slate-grey-menst-shirt-sustainable-products-on-brown-living-214627.jpg?v=1749561815&width=900",
-                rating: 4.3,
-                reviews: 89,
-                badge: "Eco-Friendly",
-              },
-              {
-                id: "3",
-                name: "Smart Home Security Camera",
-                price: "4,999",
-                comparePrice: "6,499",
-                image: "https://i.ytimg.com/vi/9hXZ7oPpOuk/maxresdefault.jpg",
-                rating: 4.7,
-                reviews: 156,
-                badge: "New",
-              },
-              {
-                id: "4",
-                name: "Modern Table Lamp",
-                price: "299",
-                comparePrice: "1,499",
-                image: "https://m.media-amazon.com/images/I/813hoLKyUOL.jpg",
-                rating: 4.4,
-                reviews: 73,
-                badge: "Sale",
-              },
-            ].map((product) => (
-              <Card key={product.id} className="group hover:shadow-lg transition-all duration-300">
-                <CardContent className="p-0">
-                  <div className="relative overflow-hidden rounded-t-lg">
-                    <Image
-                      src={product.image || "/placeholder.svg"}
-                      alt={product.name}
-                      width={300}
-                      height={300}
-                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <Badge className="absolute top-3 left-3">{product.badge}</Badge>
-                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button size="icon" variant="secondary" className="h-8 w-8">
-                        <Heart className="h-4 w-4" />
-                      </Button>
+            {loading ? (
+              // Show skeletons or loading state
+              [...Array(4)].map((_, i) => (
+                <Card key={i} className="animate-pulse">
+                  <CardContent className="p-0">
+                    <div className="bg-muted h-64 rounded-t-lg" />
+                    <div className="p-4 space-y-3">
+                      <div className="bg-muted h-4 rounded" />
+                      <div className="bg-muted h-4 rounded w-2/3" />
+                      <div className="bg-muted h-6 rounded w-1/3" />
                     </div>
-                  </div>
-                  <div className="p-4 space-y-3">
-                    <div className="space-y-1">
-                      <h3 className="font-semibold line-clamp-2">{product.name}</h3>
-                      <div className="flex items-center space-x-1">
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3 w-3 ${
-                                i < Math.floor(product.rating)
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "text-muted-foreground"
-                              }`}
-                            />
-                          ))}
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              products.map((product) => (
+                <Card key={product.id} className="group hover:shadow-lg transition-all duration-300">
+                  <CardContent className="p-0">
+                    <div className="relative overflow-hidden rounded-t-lg">
+                      <Image
+                        src={product.images?.[0] || "/placeholder.svg"}
+                        alt={product.name}
+                        width={300}
+                        height={300}
+                        className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      {product.featured && <Badge className="absolute top-3 left-3">Featured</Badge>}
+                      {product.compare_price && product.compare_price > product.price && (
+                        <Badge variant="destructive" className="absolute top-3 right-3">
+                          Sale
+                        </Badge>
+                      )}
+                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button size="icon" variant="secondary" className="h-8 w-8">
+                          <Heart className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="p-4 space-y-3">
+                      <div className="space-y-1">
+                        <h3 className="font-semibold line-clamp-2">{product.name}</h3>
+                        {/* Add rating and reviews if you fetch them */}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="space-x-2">
+                          <span className="font-bold text-lg">${product.price}</span>
+                          {product.compare_price && (
+                            <span className="text-sm text-muted-foreground line-through">${product.compare_price}</span>
+                          )}
                         </div>
-                        <span className="text-xs text-muted-foreground">({product.reviews})</span>
+                        <Button size="sm">
+                          <ShoppingCart className="h-4 w-4 mr-1" />
+                          Add
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="space-x-2">
-                        <span className="font-bold text-lg">₹{product.price}</span>
-                        {product.comparePrice && (
-                          <span className="text-sm text-muted-foreground line-through">₹{product.comparePrice}</span>
-                        )}
-                      </div>
-                      <Button size="sm">
-                        <ShoppingCart className="h-4 w-4 mr-1" />
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </div>
       </section>

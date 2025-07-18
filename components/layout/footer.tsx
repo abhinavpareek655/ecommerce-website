@@ -10,12 +10,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">E</span>
-              </div>
-              <span className="font-bold text-xl">EcomStore</span>
-            </div>
+            <img src="/Ecom-logo-title.svg" />
             <p className="text-sm text-muted-foreground">
               Your one-stop shop for quality products at great prices. We're committed to providing excellent customer
               service and fast shipping.
