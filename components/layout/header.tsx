@@ -19,16 +19,21 @@ import { useAuth } from "@/hooks/use-auth"
 import { useCart } from "@/hooks/use-cart"
 import { useRouter } from "next/navigation"
 import { supabase, type Product } from "@/lib/supabase"
+import { useTheme } from "next-themes"
+import { Sun, Moon } from "lucide-react"
+
+type ProductSuggestion = { id: string; name: string; slug: string; status: string }
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [suggestions, setSuggestions] = useState<Product[]>([])
-  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([])
+  const [allProducts, setAllProducts] = useState<ProductSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const { user, profile, signOut } = useAuth()
   const { totalItems } = useCart()
   const router = useRouter()
+  const { theme, setTheme, resolvedTheme } = useTheme()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -149,6 +154,16 @@ export function Header() {
               )}
             </Button>
           </Link>
+
+          {/* Theme Toggle Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Toggle theme"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          >
+            {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
 
           {user ? (
             <DropdownMenu>
@@ -272,6 +287,16 @@ export function Header() {
                     )}
                   </Button>
                 </Link>
+
+                {/* Theme Toggle Button (Mobile) */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Toggle theme"
+                  onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                >
+                  {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </Button>
               </div>
 
               {user ? (
