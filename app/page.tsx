@@ -154,6 +154,7 @@ export default function HomePage() {
                 <Card key={product.id} className="group hover:shadow-lg transition-all duration-300">
                   <CardContent className="p-0">
                     <div className="relative overflow-hidden rounded-t-lg">
+                      <Link href={`/products/${product.slug}`}>
                       <Image
                         src={product.images?.[0] || "/placeholder.svg"}
                         alt={product.name}
@@ -161,6 +162,7 @@ export default function HomePage() {
                         height={300}
                         className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
+                      </ Link>
                       {product.featured && <Badge className="absolute top-3 left-3">Featured</Badge>}
                       {product.compare_price && product.compare_price > product.price && (
                         <Badge variant="destructive" className="absolute top-3 right-3">

@@ -151,7 +151,14 @@ export default function CartPage() {
                   </div>
                   <div className="flex justify-between">
                     <span>Shipping</span>
-                    <span>{totalPrice >= 50 ? "Free" : "$9.99"}</span>
+                    {totalPrice >= 50 ? (
+                      <span>
+                        <span className="line-through text-muted-foreground mr-2">$9.99</span>
+                        <span className="text-green-600 font-semibold">Free</span>
+                      </span>
+                    ) : (
+                      <span>$9.99</span>
+                    )}
                   </div>
                   <div className="flex justify-between">
                     <span>Tax</span>

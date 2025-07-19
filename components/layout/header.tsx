@@ -21,6 +21,8 @@ import { useRouter } from "next/navigation"
 import { supabase, type Product } from "@/lib/supabase"
 import { useTheme } from "next-themes"
 import { Sun, Moon } from "lucide-react"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { History, Settings, LogOut } from "lucide-react"
 
 type ProductSuggestion = { id: string; name: string; slug: string; status: string }
 
@@ -75,12 +77,8 @@ export function Header() {
   }
 
   const handleSignOut = async () => {
-    try {
-      await signOut()
-      router.push("/")
-    } catch (error) {
-      console.error("Error signing out:", error)
-    }
+    await signOut()
+    router.push("/")
   }
 
   return (
@@ -168,24 +166,41 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={profile?.avatar_url || "/placeholder-user.jpg"} alt={profile?.full_name || "User"} />
+                    <AvatarFallback>
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
+                  </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link href="/account">My Account</Link>
+                  <Link href="/account" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    My Account
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/orders">Orders</Link>
+                  <Link href="/orders" className="flex items-center">
+                    <History className="mr-2 h-4 w-4" />
+                    Orders
+                  </Link>
                 </DropdownMenuItem>
                 {profile?.role === "admin" && (
                   <DropdownMenuItem asChild>
-                    <Link href="/admin">Admin Panel</Link>
+                    <Link href="/admin" className="flex items-center">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Admin Panel
+                    </Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>Sign Out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut} className="flex items-center">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
