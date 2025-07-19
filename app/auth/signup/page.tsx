@@ -94,13 +94,12 @@ export default function SignUpPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center space-x-2 mb-6">
-            <User className="h-8 w-8 text-yellow-500" />
-            <span className="text-2xl font-bold text-gray-900">Ecommerce</span>
+            <img src="/Ecom-logo-title.svg" />
           </Link>
           <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
           <p className="mt-2 text-sm text-gray-600">
             Already have an account?{' '}
-            <Link href="/auth/signin" className="font-medium text-yellow-600 hover:text-yellow-500">
+            <Link href="/auth/signin" className="font-bold text-gray-500 hover:text-gray-800 transition duration-300">
               Sign in here
             </Link>
           </p>
@@ -225,7 +224,7 @@ export default function SignUpPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold"
+                className="w-full bg-black hover:bg-gray-700 text-white font-semibold transition-all duration-300"
               >
                 {loading ? "Signing up..." : "Sign up"}
               </Button>

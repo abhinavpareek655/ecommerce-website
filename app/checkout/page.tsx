@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { useCart } from "@/hooks/use-cart"
 import { supabase } from "@/lib/supabase"
 import Script from "next/script";
+import { Checkbox } from "@/components/ui/checkbox"
 
 const RAZORPAY_KEY_ID = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "YOUR_RAZORPAY_KEY_ID";
 
@@ -22,7 +23,7 @@ export default function CheckoutPage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
-  const [paymentMethod, setPaymentMethod] = useState("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState("card");
 
   if (!user) {
     return (
@@ -63,6 +64,7 @@ export default function CheckoutPage() {
     else setBilling({ ...billing, [field]: value })
   }
 
+  // Razorpay handler
   const handleRazorpay = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -77,6 +79,7 @@ export default function CheckoutPage() {
       name: "Ecommerce",
       description: "Order Payment",
       order_id,
+      method: paymentMethod, // 'card' or 'upi'
       handler: async function (response: any) {
         try {
           const { data, error } = await supabase.from("orders").insert({
@@ -87,7 +90,7 @@ export default function CheckoutPage() {
             shipping_address: shipping,
             billing_address: billing,
             payment_status: "paid",
-            payment_method: "razorpay",
+            payment_method: paymentMethod,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           }).select().single();
@@ -190,23 +193,52 @@ export default function CheckoutPage() {
               </div>
               <div>
                 <h2 className="text-lg font-semibold mb-2">Payment Method</h2>
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value="razorpay"
-                      checked={paymentMethod === "razorpay"}
-                      onChange={() => setPaymentMethod("razorpay")}
-                    />
-                    Razorpay
-                  </label>
-                  {/* Add more payment options here if needed */}
+                <div className="flex flex-col gap-4">
+                  <div
+                    className={`flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === "card" ? "border-none ring-2 ring-grey-400 bg-grey-50" : "border-none bg-white"}`}
+                    onClick={() => setPaymentMethod("card")}
+                    tabIndex={0}
+                    role="button"
+                    aria-pressed={paymentMethod === "card"}
+                  >
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        checked={paymentMethod === "card"}
+                        onChange={() => setPaymentMethod("card")}
+                        aria-label="Select Card Payment"
+                        className="h-5 w-5"
+                      />
+                      <span className="font-medium">Credit / Debit Card</span>
+                    </div>
+                    <img src="/card.png" alt="Card" className="h-10 w-16 object-contain" />
+                  </div>
+                  <div
+                    className={`flex items-center justify-between p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === "upi" ? "border-none ring-2 ring-grey-400 bg-grey-50" : "border-none bg-white"}`}
+                    onClick={() => setPaymentMethod("upi")}
+                    tabIndex={0}
+                    role="button"
+                    aria-pressed={paymentMethod === "upi"}
+                  >
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        checked={paymentMethod === "upi"}
+                        onChange={() => setPaymentMethod("upi")}
+                        aria-label="Select UPI Payment"
+                        className="h-5 w-5"
+                      />
+                      <span className="font-medium">UPI</span>
+                    </div>
+                    <img src="/upi.jpg" alt="UPI" className="h-10 w-16 object-contain" />
+                  </div>
                 </div>
               </div>
               {error && <div className="text-red-500 text-center">{error}</div>}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Processing..." : "Pay & Place Order"}
+                {loading ? "Processing..." : `Pay & Place Order (${paymentMethod === "card" ? "Card" : "UPI"})`}
               </Button>
             </form>
           </CardContent>
