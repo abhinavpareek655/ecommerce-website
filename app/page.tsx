@@ -10,10 +10,13 @@ import Autoplay from "embla-carousel-autoplay"
 import { useEffect, useState } from "react";
 import { supabase, type Product } from "@/lib/supabase";
 import MobileSlideshow from "@/components/ui/MobileSlideshow"
+import { toast } from "@/hooks/use-toast"
+import { useCart } from "@/hooks/use-cart"
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { addItem } = useCart()
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -34,6 +37,18 @@ export default function HomePage() {
 
     fetchProducts();
   }, []);
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await addItem(product)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add item to cart.",
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
     <div className="space-y-16">
@@ -187,7 +202,7 @@ export default function HomePage() {
                             <span className="text-sm text-muted-foreground line-through">${product.compare_price}</span>
                           )}
                         </div>
-                        <Button size="sm">
+                        <Button size="sm" onClick={() => handleAddToCart(product)}>
                           <ShoppingCart className="h-4 w-4 mr-1" />
                           Add
                         </Button>
