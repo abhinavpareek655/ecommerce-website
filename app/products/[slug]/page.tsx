@@ -227,9 +227,9 @@ export default function ProductDetailPage() {
           {/* Price */}
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
-              <span className="text-3xl font-bold">${currentPrice}</span>
+              <span className="text-3xl font-bold">₹{currentPrice}</span>
               {comparePrice && comparePrice > currentPrice && (
-                <span className="text-xl text-muted-foreground line-through">${comparePrice}</span>
+                <span className="text-xl text-muted-foreground line-through">₹{comparePrice}</span>
               )}
               {comparePrice && comparePrice > currentPrice && (
                 <Badge variant="destructive">
@@ -263,7 +263,7 @@ export default function ProductDetailPage() {
                       >
                         <span className="font-medium">{variant.name}</span>
                         {variant.price && variant.price !== product.price && (
-                          <span className="text-sm text-muted-foreground">${variant.price}</span>
+                          <span className="text-sm text-muted-foreground">₹{variant.price}</span>
                         )}
                         <span className="text-xs text-muted-foreground">
                           {variant.inventory_quantity > 0 ? "In Stock" : "Out of Stock"}
@@ -493,7 +493,7 @@ export default function ProductDetailPage() {
                   <div>
                     <h3 className="font-semibold mb-2">Shipping Information</h3>
                     <ul className="space-y-1 text-sm text-muted-foreground">
-                      <li>• Free shipping on orders over $50</li>
+                      <li>• Free shipping on orders over ₹50</li>
                       <li>• Standard shipping: 3-5 business days</li>
                       <li>• Express shipping: 1-2 business days</li>
                       <li>• International shipping available</li>

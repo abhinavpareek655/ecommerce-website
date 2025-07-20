@@ -220,10 +220,10 @@ export default function CategoryDetailPage() {
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="space-x-2">
-                        <span className="font-bold text-lg">${product.price}</span>
+                        <span className="font-bold text-lg">₹{product.price}</span>
                         {product.compare_price && product.compare_price > product.price && (
                           <span className="text-sm text-muted-foreground line-through">
-                            ${product.compare_price}
+                            ₹{product.compare_price}
                           </span>
                         )}
                       </div>
@@ -361,10 +361,10 @@ export default function CategoryDetailPage() {
                     <div className="flex flex-col justify-between">
                       <div className="space-y-2">
                         <div className="space-x-2">
-                          <span className="font-bold text-2xl">${product.price}</span>
+                          <span className="font-bold text-2xl">₹{product.price}</span>
                           {product.compare_price && product.compare_price > product.price && (
                             <span className="text-lg text-muted-foreground line-through">
-                              ${product.compare_price}
+                              ₹{product.compare_price}
                             </span>
                           )}
                         </div>

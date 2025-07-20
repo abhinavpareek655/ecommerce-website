@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Shoply - Modern E-commerce Platform",
   description: "A modern e-commerce platform built with Next.js and Supabase",
-    generator: 'v0.dev'
+    generator: 'Next.js'
 }
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
         <link rel="icon" href="/Ecom-logo.svg" type="image/svg+xml" />
       </head>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <AuthProvider>
             <CartProvider>
               <div className="min-h-screen flex flex-col">

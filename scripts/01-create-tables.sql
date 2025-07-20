@@ -87,6 +87,7 @@ CREATE TABLE public.orders (
   billing_address JSONB,
   payment_status TEXT DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
   payment_method TEXT,
+  payment_id TEXT, -- Added for storing Razorpay payment ID
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -100,6 +101,7 @@ CREATE TABLE public.order_items (
   quantity INTEGER NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   product_name TEXT NOT NULL,
+  variant_name TEXT, -- Added for storing variant names
   variant_options JSONB DEFAULT '{}'
 );
 
@@ -155,6 +157,9 @@ CREATE POLICY "Users can create own orders" ON public.orders FOR INSERT WITH CHE
 CREATE POLICY "Users can view own order items" ON public.order_items FOR SELECT USING (
   EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid())
 );
+CREATE POLICY "Users can create own order items" ON public.order_items FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid())
+);
 
 -- Reviews
 CREATE POLICY "Anyone can view reviews" ON public.reviews FOR SELECT USING (true);
@@ -194,3 +199,25 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- Migration: Add payment_id column to existing orders table (if it doesn't exist)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'orders' AND column_name = 'payment_id'
+  ) THEN
+    ALTER TABLE public.orders ADD COLUMN payment_id TEXT;
+  END IF;
+END $$;
+
+-- Migration: Add variant_name column to existing order_items table (if it doesn't exist)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'order_items' AND column_name = 'variant_name'
+  ) THEN
+    ALTER TABLE public.order_items ADD COLUMN variant_name TEXT;
+  END IF;
+END $$;

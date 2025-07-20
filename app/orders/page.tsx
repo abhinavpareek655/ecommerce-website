@@ -78,7 +78,7 @@ export default function OrdersPage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Total:</span>
-                  <span className="font-semibold">${order.total_amount.toFixed(2)}</span>
+                  <span className="font-semibold">₹{order.total_amount.toFixed(2)}</span>
                 </div>
                 <Button asChild variant="outline" size="sm" className="mt-4 w-full">
                   <Link href={`/orders/${order.id}`}>View Details</Link>

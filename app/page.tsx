@@ -197,7 +197,7 @@ export default function HomePage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="space-x-2">
-                          <span className="font-bold text-lg">${product.price}</span>
+                          <span className="font-bold text-lg">₹{product.price}</span>
                           {product.compare_price && (
                             <span className="text-sm text-muted-foreground line-through">${product.compare_price}</span>
                           )}
@@ -225,7 +225,7 @@ export default function HomePage() {
                 <ShoppingCart className="h-6 w-6 text-primary-foreground" />
               </div>
               <h3 className="font-semibold text-lg">Free Shipping</h3>
-              <p className="text-muted-foreground">Free shipping on all orders over $50. Fast and reliable delivery.</p>
+              <p className="text-muted-foreground">Free shipping on all orders over ₹50. Fast and reliable delivery.</p>
             </div>
             <div className="text-center space-y-4">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto">
