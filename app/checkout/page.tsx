@@ -16,6 +16,16 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const RAZORPAY_KEY_ID = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "YOUR_RAZORPAY_KEY_ID"
 
+// Debug environment variables (remove in production)
+if (typeof window !== 'undefined') {
+  console.log("Environment Check:", {
+    keyId: RAZORPAY_KEY_ID,
+    hasKey: !!RAZORPAY_KEY_ID && RAZORPAY_KEY_ID !== "YOUR_RAZORPAY_KEY_ID",
+    isLive: RAZORPAY_KEY_ID?.startsWith('rzp_live_'),
+    isTest: RAZORPAY_KEY_ID?.startsWith('rzp_test_')
+  });
+}
+
 // Declare Razorpay type for TypeScript
 declare global {
   interface Window {
@@ -184,12 +194,21 @@ export default function CheckoutPage() {
     setError("")
 
     try {
+      // Debug environment
+      console.log("Payment Debug Info:", {
+        keyId: RAZORPAY_KEY_ID,
+        isLiveKey: RAZORPAY_KEY_ID?.startsWith('rzp_live_'),
+        isTestKey: RAZORPAY_KEY_ID?.startsWith('rzp_test_'),
+        environment: process.env.NODE_ENV
+      })
+
       // Calculate total amount including shipping and tax
       const shippingCost = totalPrice >= 50 ? 0 : 9.99
       const tax = totalPrice * 0.08
       const total = totalPrice + shippingCost + tax
       
       const amount = Math.round(total * 100) // Convert to paise
+      console.log("Transaction Details:", { total, amount, currency: 'INR' })
       // 1. Create Razorpay order on backend
       const orderRes = await fetch('/api/create-razorpay-order', {
         method: 'POST',
@@ -197,7 +216,15 @@ export default function CheckoutPage() {
         body: JSON.stringify({ amount, currency: 'INR' })
       });
       const orderData = await orderRes.json();
+      
+      console.log("Order creation response:", { 
+        ok: orderRes.ok, 
+        status: orderRes.status, 
+        data: orderData 
+      });
+      
       if (!orderRes.ok) {
+        console.error("Order creation failed:", orderData);
         throw new Error(orderData.error || 'Failed to create Razorpay order');
       }
       const order_id = orderData.id;
@@ -253,7 +280,15 @@ export default function CheckoutPage() {
       
       rzp.on('payment.failed', function (response: any) {
         console.error("Payment failed:", response.error)
-        setError(`Payment failed: ${response.error.description || response.error.reason || 'Unknown error'}`)
+        console.error("Detailed error info:", {
+          code: response.error.code,
+          description: response.error.description,
+          source: response.error.source,
+          step: response.error.step,
+          reason: response.error.reason,
+          metadata: response.error.metadata
+        })
+        setError(`Payment failed: ${response.error.description || response.error.reason || 'Unknown error'} (Code: ${response.error.code})`)
         setLoading(false)
       })
 
